@@ -1,0 +1,13 @@
+{
+  "name": "typechain",
+  "version": "1.0.0",
+  "description": "Learning typescript by making a blockchain with it",
+  "main": "index.js",
+  "repository": "https://github.com/SHHam12/typechain",
+  "author": "SUK HWA HAM <hamsukhwa@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "prestart": "tsc"
+  }
+}
