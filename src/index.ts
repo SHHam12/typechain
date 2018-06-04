@@ -37,7 +37,13 @@ class Block {
     }
 }
 
-const genesisBlock: Block = new Block(0, "asddwdsad", "", "Genesis", 123456);
+const genesisBlock: Block = new Block(
+    0, 
+    "27F55B6119B76DC7E9742F1DB6EDAF1750FD5E65EB8CC663823705057166CEC71528076308176",
+    "",
+    "Genesis",
+    1528076308176
+);
 
 let blockchain: [Block] = [genesisBlock];
 
@@ -96,10 +102,22 @@ const addBlock = (candidateBlock: Block): void => {
     }
 };
 
-createNewBlock("second block");
-createNewBlock("third block");
-createNewBlock("fourth block");
-
-console.log(blockchain);
+const isChainValid = (candidateChain: Block[]): boolean => {
+    const isGenesisValid = (block: Block) => {
+        return JSON.stringify(block) === JSON.stringify(genesisBlock);
+    };
+    if (!isGenesisValid(candidateChain[0])) {
+        console.log(
+            "The candidateChains's genesisBlock is not the same as our genesisBlock"
+        );
+        return false;
+    }
+    for(let i = 1; i < candidateChain.length; i ++) {
+        if (isBlockValid(candidateChain[i], candidateChain[i - 1])) {
+            return false;
+        }
+    }
+    return true;
+}
 
 export {};
