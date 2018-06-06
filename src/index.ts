@@ -102,7 +102,7 @@ const addBlock = (candidateBlock: Block): void => {
     }
 };
 
-const isChainValid = (candidateChain: Block[]): boolean => {
+const isChainValid = (candidateChain: [Block]): boolean => {
     const isGenesisValid = (block: Block) => {
         return JSON.stringify(block) === JSON.stringify(genesisBlock);
     };
@@ -119,5 +119,23 @@ const isChainValid = (candidateChain: Block[]): boolean => {
     }
     return true;
 }
+
+const replaceChain = (candidateChain: [Block]): boolean => {
+    if (isChainValid(candidateChain) && candidateChain.length > getBlockchain().length) {
+        blockchain = candidateChain;
+        return true;
+    } else {
+        return false;
+    }
+};
+
+const addBlockToChain = (candidateBlock: Block): boolean => {
+    if (isBlockValid(candidateBlock, getLatestBlock())) {
+        getBlockchain().push(candidateBlock);
+        return true;
+    } else {
+        return false;
+    }
+}; 
 
 export {};
