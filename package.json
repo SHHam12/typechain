@@ -7,12 +7,16 @@
   "author": "SUK HWA HAM <hamsukhwa@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "tsc-watch --onSuccess \" node dist/index.js\" "
+    "start": "tsc-watch --onSuccess \" node dist/index.js\" ",
+    "dev": "nodemon dist/server.js"
   },
   "devDependencies": {
     "tsc-watch": "^1.0.21"
   },
   "dependencies": {
-    "crypto-js": "^3.1.9-1"
+    "body-parser": "^1.18.3",
+    "crypto-js": "^3.1.9-1",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0"
   }
 }

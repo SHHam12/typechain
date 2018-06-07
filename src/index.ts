@@ -138,4 +138,4 @@ const addBlockToChain = (candidateBlock: Block): boolean => {
     }
 }; 
 
-export {};
+export { getBlockchain, createNewBlock };
