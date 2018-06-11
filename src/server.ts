@@ -2,7 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import * as morgan from "morgan";
 import { getBlockchain, createNewBlock } from "./index";
-import { startP2PServer } from "./p2p";
+import { startP2PServer, connectToPeers } from "./p2p";
 
 declare var process: {
     env: {
@@ -25,6 +25,12 @@ app.post("/blocks", (req, res) => {
     const newBlock = createNewBlock(data);
     res.send(newBlock);
 });
+
+app.post("/peers", (req, res) => {
+    const { body: { peer } } = req;
+    connectToPeers(peer);
+    res.send();
+})
 
 const server = app.listen(PORT, () =>
     console.log(`SH-coin HTTP Server is running on port ${PORT}`)
