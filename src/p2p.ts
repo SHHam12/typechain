@@ -1,6 +1,34 @@
 import * as WebSockets from "ws";
+import { getLastBlock } from "./index";
 
 const sockets = [];
+
+// Message Types
+const GET_LATEST = "GET_LATEST";
+const GET_ALL = "GET_ALL";
+const BLOCKCHAIN_RESPONSE = "BLOCKCHAIN_RESPONSE";
+
+// Message Creators
+const getLatest = () => {
+    return {
+        type: GET_LATEST,
+        data: null
+    };
+};
+
+const getAll = () => {
+    return {
+        type: GET_ALL,
+        data: null
+    };
+};
+
+const blockchainresponse = (data) => {
+    return {
+        type: BLOCKCHAIN_RESPONSE,
+        data
+    };
+};
 
 const getSockets = () => sockets;
 
@@ -12,19 +40,20 @@ const startP2PServer = (server):void => {
     console.log("SH-coin P2P Server Running");
 };
 
-const initSocketConnection = (socket):void => {
-    sockets.push(socket);
-    handleSocketError(socket);
-    socket.on("message", (data) => {
-       console.log(data);
-    });
-    setTimeout(() => {
-        socket.send("welcome");
-    }, 5000);
+const initSocketConnection = (ws):void => {
+    sockets.push(ws);
+    handleSocketMessages(ws);
+    handleSocketError(ws);
 };
 
+const handleSocketMessages = (ws):void => {
+    ws.on("message", data => {
+
+    })
+}
+
 const handleSocketError = (ws):void => {
-    const closeSocketConnection = ws => {
+    const closeSocketConnection = (ws):void => {
         ws.close()
         sockets.splice(sockets.indexOf(ws), 1);
     };
@@ -37,6 +66,6 @@ const connectToPeers = (newPeer):void => {
     ws.on("open", () => {
         initSocketConnection(ws);
     });
-}
-;
+};
+
 export { startP2PServer, connectToPeers }; 

@@ -49,12 +49,12 @@ let blockchain: [Block] = [genesisBlock];
 
 const getBlockchain = (): Block[] => blockchain;
 
-const getLatestBlock = (): Block => blockchain[blockchain.length - 1];
+const getLastBlock = (): Block => blockchain[blockchain.length - 1];
 
 const getNewTimeStamp = (): number => Math.round(new Date().getTime() / 1000);
 
 const createNewBlock = (data: string): Block => {
-    const previousBlock: Block = getLatestBlock();
+    const previousBlock: Block = getLastBlock();
     const newIndex: number = previousBlock.index + 1;
     const newTimestamp: number = getNewTimeStamp();
     const newHash: string = Block.calculateBlockHash(
@@ -97,7 +97,7 @@ const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
 };
 
 const addBlock = (candidateBlock: Block): void => {
-    if (isBlockValid(candidateBlock, getLatestBlock())) {
+    if (isBlockValid(candidateBlock, getLastBlock())) {
         blockchain.push(candidateBlock);
     }
 };
@@ -130,7 +130,7 @@ const replaceChain = (candidateChain: [Block]): boolean => {
 };
 
 const addBlockToChain = (candidateBlock: Block): boolean => {
-    if (isBlockValid(candidateBlock, getLatestBlock())) {
+    if (isBlockValid(candidateBlock, getLastBlock())) {
         getBlockchain().push(candidateBlock);
         return true;
     } else {
@@ -138,4 +138,4 @@ const addBlockToChain = (candidateBlock: Block): boolean => {
     }
 }; 
 
-export { getBlockchain, createNewBlock };
+export { getBlockchain, createNewBlock, getLastBlock };
