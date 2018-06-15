@@ -44,13 +44,34 @@ const initSocketConnection = (ws):void => {
     sockets.push(ws);
     handleSocketMessages(ws);
     handleSocketError(ws);
+    sendMessage(ws, getLatest());
+};
+
+const parseData = (data):any => {
+    try {
+        return JSON.parse(data)
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
 };
 
 const handleSocketMessages = (ws):void => {
     ws.on("message", data => {
+        const message = parseData(data);
+        if (message === null) {
+            return;
+        }
+        console.log(message);
+        switch (message.type) {
+            case GET_LATEST:
+                sendMessage(ws, getLastBlock());
+                break;
+        }
+    });
+};
 
-    })
-}
+const sendMessage = (ws, message) => ws.send(JSON.stringify(message));
 
 const handleSocketError = (ws):void => {
     const closeSocketConnection = (ws):void => {
