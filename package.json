@@ -11,6 +11,7 @@
     "dev": "nodemon dist/server.js"
   },
   "devDependencies": {
+    "@types/node": "^10.3.3",
     "tsc-watch": "^1.0.21"
   },
   "dependencies": {

@@ -45,16 +45,16 @@ const genesisBlock: Block = new Block(
     1528076308176
 );
 
-let blockchain: [Block] = [genesisBlock];
+let blockchain: Block[] = [genesisBlock];
 
 const getBlockchain = (): Block[] => blockchain;
 
-const getLastBlock = (): Block => blockchain[blockchain.length - 1];
+const getNewestBlock = (): Block => blockchain[blockchain.length - 1];
 
 const getNewTimeStamp = (): number => Math.round(new Date().getTime() / 1000);
 
 const createNewBlock = (data: string): Block => {
-    const previousBlock: Block = getLastBlock();
+    const previousBlock: Block = getNewestBlock();
     const newIndex: number = previousBlock.index + 1;
     const newTimestamp: number = getNewTimeStamp();
     const newHash: string = Block.calculateBlockHash(
@@ -97,12 +97,12 @@ const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
 };
 
 const addBlock = (candidateBlock: Block): void => {
-    if (isBlockValid(candidateBlock, getLastBlock())) {
-        blockchain.push(candidateBlock);
+    if (isBlockValid(candidateBlock, getNewestBlock())) {
+      blockchain.push(candidateBlock);
     }
 };
 
-const isChainValid = (candidateChain: [Block]): boolean => {
+const isChainValid = (candidateChain: Block[]): boolean => {
     const isGenesisValid = (block: Block) => {
         return JSON.stringify(block) === JSON.stringify(genesisBlock);
     };
@@ -120,7 +120,7 @@ const isChainValid = (candidateChain: [Block]): boolean => {
     return true;
 }
 
-const replaceChain = (candidateChain: [Block]): boolean => {
+const replaceChain = (candidateChain: Block[]): boolean => {
     if (isChainValid(candidateChain) && candidateChain.length > getBlockchain().length) {
         blockchain = candidateChain;
         return true;
@@ -130,12 +130,19 @@ const replaceChain = (candidateChain: [Block]): boolean => {
 };
 
 const addBlockToChain = (candidateBlock: Block): boolean => {
-    if (isBlockValid(candidateBlock, getLastBlock())) {
-        getBlockchain().push(candidateBlock);
-        return true;
+    if (isBlockValid(candidateBlock, getNewestBlock())) {
+      getBlockchain().push(candidateBlock);
+      return true;
     } else {
-        return false;
+      return false;
     }
 }; 
 
-export { getBlockchain, createNewBlock, getLastBlock };
+export { 
+    getBlockchain, 
+    createNewBlock, 
+    getNewestBlock, 
+    replaceChain, 
+    addBlockToChain,
+    Block 
+};

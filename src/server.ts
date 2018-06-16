@@ -4,12 +4,6 @@ import * as morgan from "morgan";
 import { getBlockchain, createNewBlock } from "./index";
 import { startP2PServer, connectToPeers } from "./p2p";
 
-declare var process: {
-    env: {
-        HTTP_PORT: string;
-    };
-};
-
 const PORT = process.env.HTTP_PORT || 3000;
 
 const app = express();
