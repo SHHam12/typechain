@@ -3,6 +3,7 @@ import {
     getNewestBlock, 
     replaceChain, 
     addBlockToChain,
+    getBlockchain,
     Block 
 } from "./index";
 
@@ -28,7 +29,7 @@ const getAll = () => {
     };
 };
 
-const blockchainresponse = (data) => {
+const blockchainResponse = (data) => {
     return {
         type: BLOCKCHAIN_RESPONSE,
         data
@@ -72,8 +73,11 @@ const handleSocketMessages = (ws):void => {
             case GET_LATEST:
                 sendMessage(ws, responseLatest());
                 break;
+            case GET_ALL:
+                sendMessage(ws, responseAll());
+                break;
             case BLOCKCHAIN_RESPONSE:
-                const receivedBlocks = message.data
+                const receivedBlocks = message.data;
                 if (receivedBlocks === null) {
                     break;
                 }
@@ -98,16 +102,21 @@ const handleBlockchainResponse = (receivedBlocks:Block[]):void => {
         if (newestBlock.hash === latestBlockReceived.previousHash) {
             addBlockToChain(latestBlockReceived);
         } else if (receivedBlocks.length === 1) {
-            // to do, get all the blocks, we are way behind
+            sendMessageToAll(getAll());
         } else {
             replaceChain(receivedBlocks);
         }
     }
 };
 
+const sendMessageToAll = message =>
+    sockets.forEach(ws => sendMessage(ws, message));
+
 const sendMessage = (ws, message) => ws.send(JSON.stringify(message));
 
-const responseLatest = () => blockchainresponse([getNewestBlock()]);
+const responseLatest = () => blockchainResponse([getNewestBlock()]);
+
+const responseAll = () => blockchainResponse(getBlockchain());
 
 const handleSocketError = (ws):void => {
     const closeSocketConnection = (ws):void => {
