@@ -70,7 +70,8 @@ const createNewBlock = (data: string): Block => {
         data,
         newTimestamp
     );
-    addBlock(newBlock);
+    addBlockToChain(newBlock);
+    require("./p2p").broadcastNewBlock();
     return newBlock;
 };
 
@@ -93,12 +94,6 @@ const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
         return false;
     } else {
         return true;
-    }
-};
-
-const addBlock = (candidateBlock: Block): void => {
-    if (isBlockValid(candidateBlock, getNewestBlock())) {
-      blockchain.push(candidateBlock);
     }
 };
 
