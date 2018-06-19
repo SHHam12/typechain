@@ -1,6 +1,9 @@
 import * as CryptoJS from "crypto-js";
 import * as hexToBinary from "hex-to-binary";
 
+const BLOCK_GENERATION_INTERVAL = 10;
+const DIFFICULTY_ADJUSTMENT_INTERVAL = 10;
+
 class Block {
     static calculateBlockHash = (
         index: number,
@@ -68,16 +71,44 @@ const createNewBlock = (data: string): Block => {
     const previousBlock: Block = getNewestBlock();
     const newBlockIndex: number = previousBlock.index + 1;
     const newTimestamp: number = getNewTimeStamp();
+    const difficulty = findDifficulty();
     const newBlock: Block = findBlock(
         newBlockIndex,
         previousBlock.hash,
         newTimestamp,
         data,
-        20
+        difficulty
     );
     addBlockToChain(newBlock);
     require("./p2p").broadcastNewBlock();
     return newBlock;
+};
+
+const findDifficulty = ():number => {
+    const newestBlock = getNewestBlock();
+    if (
+        newestBlock.index % DIFFICULTY_ADJUSTMENT_INTERVAL === 0 &&
+        newestBlock.index !== 0
+        ) {
+        return calculateNewDifficulty(newestBlock, getBlockchain());
+    } else {
+        return newestBlock.difficulty;
+    }
+}
+
+const calculateNewDifficulty = (newestBlock: Block, blockchain: Block[]): number => {
+    const lastCalculatedBlock =
+        blockchain[blockchain.length - DIFFICULTY_ADJUSTMENT_INTERVAL];
+    const timeExpected =
+        BLOCK_GENERATION_INTERVAL * DIFFICULTY_ADJUSTMENT_INTERVAL;
+    const timeTaken = newestBlock.timestamp - lastCalculatedBlock.timestamp;
+    if (timeTaken < timeExpected / 2) {
+        return lastCalculatedBlock.difficulty + 1;
+    } else if (timeTaken > timeExpected * 2) {
+        return lastCalculatedBlock.difficulty - 1;
+    } else {
+        return lastCalculatedBlock.difficulty;
+    }
 };
 
 const findBlock = (
