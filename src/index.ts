@@ -65,12 +65,12 @@ const getBlockchain = (): Block[] => blockchain;
 
 const getNewestBlock = (): Block => blockchain[blockchain.length - 1];
 
-const getNewTimeStamp = (): number => Math.round(new Date().getTime() / 1000);
+const getTimestamp = (): number => Math.round(new Date().getTime() / 1000);
 
 const createNewBlock = (data: string): Block => {
     const previousBlock: Block = getNewestBlock();
     const newBlockIndex: number = previousBlock.index + 1;
-    const newTimestamp: number = getNewTimeStamp();
+    const newTimestamp: number = getTimestamp();
     const difficulty = findDifficulty();
     const newBlock: Block = findBlock(
         newBlockIndex,
@@ -162,18 +162,33 @@ const getHashforBlock = (aBlock: Block): string =>
         aBlock.nonce
     );
 
+const isTimeStampValid = (newBlock: Block, oldBlock: Block): boolean => {
+    return (
+        oldBlock.timestamp - 60 < newBlock.timestamp &&
+        newBlock.timestamp - 60 < getTimestamp()
+    );
+};
+
 const isBlockValid = (candidateBlock: Block, previousBlock: Block): boolean => {
     if (!Block.validateStructure(candidateBlock)) {
+        console.log("The candidate block  structure is not valid");
         return false;
     } else if (previousBlock.index + 1 !== candidateBlock.index) {
+        console.log("The candidate block does not have a valid index");
         return false;
     } else if (previousBlock.hash !== candidateBlock.previousHash) {
+        console.log(
+            "The previousHash of the candidate block is not the hash of the lastest block"
+        );
         return false;
     } else if (getHashforBlock(candidateBlock) !== candidateBlock.hash) {
+        console.log("The hash of this block is invalid");
         return false;
-    } else {
-        return true;
-    }
+    } else if (!isTimeStampValid(candidateBlock, previousBlock)) {
+        console.log("The timestamp of the block is dodge");
+        return false;
+    } 
+    return true;
 };
 
 const isChainValid = (candidateChain: Block[]): boolean => {
