@@ -209,8 +209,17 @@ const isChainValid = (candidateChain: Block[]): boolean => {
     return true;
 }
 
+const sumDifficulty = (anyBlockchain:Block[]) =>
+    anyBlockchain
+        .map(block => block.difficulty)
+        .map(difficulty => Math.pow(2, difficulty))
+        .reduce((a, b) => a + b);
+
 const replaceChain = (candidateChain: Block[]): boolean => {
-    if (isChainValid(candidateChain) && candidateChain.length > getBlockchain().length) {
+    if (
+        isChainValid(candidateChain) && 
+        sumDifficulty(candidateChain) > sumDifficulty(getBlockchain())
+    ) {
         blockchain = candidateChain;
         return true;
     } else {
