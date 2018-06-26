@@ -1,6 +1,7 @@
 const toHexString = (byteArray):string => {
-    return Array.from(byteArray, byte => {
-        return ("0" + (byte & 0xff).toString(16)).slice(-2);
-    }).join("");
+    return byteArray
+        .reduce((output, elem) => 
+        output + ("0" + elem.toString(16)).slice(-2), "");
 };
+
 export { toHexString };
