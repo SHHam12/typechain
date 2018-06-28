@@ -84,3 +84,13 @@ const signTxIn = (tx:Transaction, txInIndex:number, privateKey:string, uTxOut:UT
     const signature = toHexString(key.sign(dataToSign).toDER());
     return signature;
 };
+
+const updateUTxOuts = (newTxs:Transaction[], uTxOutList:UTxOut[]) => {
+    const newUTxOuts = newTxs
+        .map(tx => {
+            tx.txOuts.map((txOut, index) => {
+                new UTxOut(tx.id, index, txOut.address, txOut.amount);
+            });
+        })
+        .reduce((a, b) => a.concat(b), []);
+}
