@@ -85,7 +85,7 @@ const signTxIn = (tx:Transaction, txInIndex:number, privateKey:string, uTxOut:UT
     return signature;
 };
 
-const updateUTxOuts = (newTxs:Transaction[], uTxOutList:UTxOut[]) => {
+const updateUTxOuts = (newTxs:Transaction[], uTxOutList:UTxOut[]):UTxOut[] => {
     const newUTxOuts = newTxs
         .map(tx => {
             tx.txOuts.map((txOut, index) => {
@@ -93,4 +93,15 @@ const updateUTxOuts = (newTxs:Transaction[], uTxOutList:UTxOut[]) => {
             });
         })
         .reduce((a, b) => a.concat(b), []);
+
+    const spendTxOuts = newTxs
+        .map(tx => tx.txIns)
+        .reduce((a, b) => a.concat(b), [])
+        .map(txIn => new UTxOut(txIn.txOutId, txIn.txOutIndex, "", 0));
+
+    const resultingUTxOuts = uTxOutList.filter(
+        uTxO => !findUTxOut(uTxO.txOutId, uTxO.txOutIndex, spendTxOuts))
+    .concat(newUTxOuts);
+
+    return resultingUTxOuts;
 }
